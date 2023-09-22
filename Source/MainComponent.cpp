@@ -33,6 +33,9 @@ MainComponent::MainComponent()
     addAndMakeVisible(volSlider);
     addAndMakeVisible(speedSlider);
     addAndMakeVisible(posSlider);
+    
+    // set application to initial state
+    changeState(Initial);
 }
 
 MainComponent::~MainComponent()
@@ -95,13 +98,25 @@ void MainComponent::changeState(AppState newState)
         
         switch(state)
         {
+            case Initial:
+                stopButton.setEnabled(false);
+                playButton.setEnabled(false);
+                transportSource.setPosition(0.0);
+                break;
             case Stopped:
+                stopButton.setEnabled(false);
+                playButton.setEnabled(true);
+                transportSource.setPosition(0.0);
                 break;
             case Starting:
+                playButton.setEnabled(false);
+                transportSource.start();
                 break;
             case Playing:
+                stopButton.setEnabled(true);
                 break;
             case Stopping:
+                transportSource.stop();
                 break;
         }
     }

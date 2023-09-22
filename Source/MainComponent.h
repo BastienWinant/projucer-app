@@ -4,6 +4,7 @@
 
 enum AppState
 {
+    Initial, // Define a state for the intial state of the app
     Stopping, // Audio is playing but playback has been told to stop, after this it will return to the Stopped state
     Stopped, // Audio playback is stopped and ready to be started
     Starting, // Audio playback hasn't yet started but it has been told to start
