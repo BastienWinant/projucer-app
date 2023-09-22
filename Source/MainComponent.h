@@ -45,6 +45,13 @@ private:
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
     /** control the playback of an AudioFormatReaderSource object */
     juce::AudioTransportSource transportSource;
+    
+    // Buttons and sliders
+    juce::TextButton playButton{"PLAY"};
+    juce::TextButton stopButton{"STOP"};
+    juce::Slider volSlider;
+    juce::Slider speedSlider;
+    juce::Slider posSlider;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

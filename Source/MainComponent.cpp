@@ -26,6 +26,13 @@ MainComponent::MainComponent()
     
     // add MainContentComponent object as listener to the AudioTransportSource object so that we can respond to changes in its state
     transportSource.addChangeListener(this);
+    
+    // add the buttons and sliders to the display
+    addAndMakeVisible(playButton);
+    addAndMakeVisible(stopButton);
+    addAndMakeVisible(volSlider);
+    addAndMakeVisible(speedSlider);
+    addAndMakeVisible(posSlider);
 }
 
 MainComponent::~MainComponent()
@@ -71,6 +78,13 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+    double rowH = getHeight() / 5;
+    
+    playButton.setBounds(0, 0, getWidth(), rowH);
+    stopButton.setBounds(0, rowH, getWidth(), rowH);
+    volSlider.setBounds(0, rowH * 2, getWidth(), rowH);
+    speedSlider.setBounds(0, rowH * 3, getWidth(), rowH);
+    posSlider.setBounds(0, rowH * 4, getWidth(), rowH);
 }
 
 void MainComponent::changeState(AppState newState)
