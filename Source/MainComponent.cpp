@@ -17,13 +17,18 @@ MainComponent::MainComponent() : state(Stopped)
     else
     {
         // Specify the number of input and output channels that we want to open
+        // Trigger the audio system to start up by call the prepareToPlay() function
         setAudioChannels (2, 2);
     }
     
     addAndMakeVisible(playButton);
     addAndMakeVisible(stopButton);
     
+    // register basic format files
     formatManager.registerBasicFormats();
+    
+    // make the app reactive to changes in the playback state
+    transportSource.addChangeListener(this);
 }
 
 MainComponent::~MainComponent()
@@ -77,4 +82,50 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     playButton.setBounds(0, 0, getWidth(), getHeight() / 2);
     stopButton.setBounds(0, getHeight() / 2, getWidth(), getHeight() / 2);
+}
+
+void MainComponent::changeState(TransportState newState)
+{
+    if (state != newState)
+    {
+        state = newState;
+        
+        switch (state) {
+            case Stopped:
+                stopButton.setEnabled(false);
+                playButton.setEnabled(true);
+                transportSource.setPosition(0.0);
+                break;
+            case Starting:
+                playButton.setEnabled(false);
+                transportSource.start();
+                break;
+            case Playing:
+                stopButton.setEnabled(true);
+                break;
+            case Stopping:
+                transportSource.stop();
+                break;
+        }
+    }
+}
+
+void MainComponent::changeListenerCallback (juce::ChangeBroadcaster* source)
+{
+    juce::String message;
+    message << "Change event captured";
+    juce::Logger::getCurrentLogger()->writeToLog(message);
+    
+    
+    if (source == &transportSource)
+    {
+        if (transportSource.isPlaying())
+        {
+            changeState(Playing);
+        }
+        else
+        {
+            changeState(Stopping);
+        }
+    }
 }

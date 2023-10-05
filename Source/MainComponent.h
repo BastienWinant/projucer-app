@@ -16,7 +16,8 @@ enum TransportState
     Stopping // Audio is playing but playback has been told to stop, after this it will return to the Stopped state.
 };
 
-class MainComponent  : public juce::AudioAppComponent
+class MainComponent  : public juce::AudioAppComponent,
+                        public juce::ChangeListener
 {
 public:
     //==============================================================================
@@ -25,14 +26,21 @@ public:
 
     //==============================================================================
     // AudioSource class methods
+    /** called just before audio processing starts */
     void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
+    /** called each time the audio hardware needs a new block of audio data */
     void getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill) override;
+    /**  called when audio processing has finished */
     void releaseResources() override;
 
     //==============================================================================
     // Component class methods
     void paint (juce::Graphics& g) override;
     void resized() override;
+    
+    //==============================================================================
+    // ChangeListener class methods
+    void changeListenerCallback (juce::ChangeBroadcaster* source) override;
 
 private:
     //==============================================================================
@@ -50,6 +58,6 @@ private:
     juce::TextButton playButton{"PLAY"};
     juce::TextButton stopButton{"STOP"};
 
-
+    void changeState(TransportState newState);
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
