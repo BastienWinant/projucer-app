@@ -36,15 +36,19 @@ public:
 
 private:
     //==============================================================================
-    /** keeps track of the overall state of the application */
+    // keeps track of the overall state of the application
     TransportState state;
     
-    /** contains a list of audio formats and can create suitable objects for reading audio data */
+    // contains a list of audio formats and can create suitable objects for reading audio data
     juce::AudioFormatManager formatManager;
-    /** reads audio data from an AudioFormatReader object and renders the audio via its getNextAudioBlock() function */
+    // reads audio data from an AudioFormatReader object and renders the audio via its getNextAudioBlock() function
     std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
-    /** controls the playback of an AudioFormatReaderSource object */
+    // controls the playback of an AudioFormatReaderSource object
     juce::AudioTransportSource transportSource;
+    
+    // playback control buttons
+    juce::TextButton playButton{"PLAY"};
+    juce::TextButton stopButton{"STOP"};
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

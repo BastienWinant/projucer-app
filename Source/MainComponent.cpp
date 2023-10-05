@@ -19,6 +19,11 @@ MainComponent::MainComponent() : state(Stopped)
         // Specify the number of input and output channels that we want to open
         setAudioChannels (2, 2);
     }
+    
+    addAndMakeVisible(playButton);
+    addAndMakeVisible(stopButton);
+    
+    formatManager.registerBasicFormats();
 }
 
 MainComponent::~MainComponent()
@@ -70,6 +75,6 @@ void MainComponent::paint (juce::Graphics& g)
 void MainComponent::resized()
 {
     // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
+    playButton.setBounds(0, 0, getWidth(), getHeight() / 2);
+    stopButton.setBounds(0, getHeight() / 2, getWidth(), getHeight() / 2);
 }
