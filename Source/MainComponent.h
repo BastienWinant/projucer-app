@@ -16,7 +16,8 @@ enum TransportState
     your controls and content.
 */
 class MainComponent  : public juce::AudioAppComponent,
-                        public juce::ChangeListener
+                        public juce::ChangeListener,
+                        public juce::Button::Listener
 {
 public:
     //==============================================================================
@@ -40,6 +41,10 @@ public:
     //==============================================================================
     // ChangeListener class methods
     void changeListenerCallback (juce::ChangeBroadcaster *source) override;
+    
+    //==============================================================================
+    // Button::Listener class methods
+    void buttonClicked (juce::Button *button) override;
 
 private:
     //==============================================================================
@@ -55,6 +60,9 @@ private:
     // Playback control buttons
     juce::TextButton playButton{"PLAY"};
     juce::TextButton stopButton{"STOP"};
+    
+    // File load button
+    juce::TextButton loadButton{"LOAD"};
     
     void changeState(TransportState newState);
 

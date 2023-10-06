@@ -23,6 +23,11 @@ MainComponent::MainComponent()
     
     addAndMakeVisible(&playButton);
     addAndMakeVisible(&stopButton);
+    addAndMakeVisible(&loadButton);
+    
+    playButton.addListener(this);
+    stopButton.addListener(this);
+    loadButton.addListener(this);
     
     formatManager.registerBasicFormats();
     
@@ -79,8 +84,11 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-    playButton.setBounds(0, 0, getWidth(), getHeight() / 2);
-    stopButton.setBounds(0, getHeight() / 2, getWidth(), getHeight() / 2);
+    double rowH = getHeight() / 3;
+    
+    playButton.setBounds(0, 0, getWidth(), rowH);
+    stopButton.setBounds(0, rowH, getWidth(), rowH);
+    loadButton.setBounds(0, rowH * 2, getWidth(), rowH);
 }
 
 void MainComponent::changeState(TransportState newState)
@@ -127,5 +135,23 @@ void MainComponent::changeListenerCallback (juce::ChangeBroadcaster *source)
         {
             changeState(Stopped);
         }
+    }
+}
+
+void MainComponent::buttonClicked (juce::Button *button)
+{
+    if (button == &playButton)
+    {
+        juce::Logger::getCurrentLogger()->writeToLog("MainComponent::buttonClicked: - Play button clicked!");
+    }
+    
+    if (button == &stopButton)
+    {
+        juce::Logger::getCurrentLogger()->writeToLog("MainComponent::buttonClicked: - Stop button clicked!");
+    }
+    
+    if (button == &loadButton)
+    {
+        juce::Logger::getCurrentLogger()->writeToLog("MainComponent::buttonClicked: - Load button clicked!");
     }
 }
