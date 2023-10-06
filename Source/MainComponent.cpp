@@ -17,16 +17,22 @@ MainComponent::MainComponent()
     else
     {
         // Specify the number of input and output channels that we want to open
-        // Call the prepareToPlay() function
+        // Trigger the audio system to start up and call the prepareToPlay() function
         setAudioChannels (2, 2);
     }
     
-    logMessage("Hello World");
+    addAndMakeVisible(&playButton);
+    addAndMakeVisible(&stopButton);
+    
+    formatManager.registerBasicFormats();
+    
+    transportSource.addChangeListener(this);
 }
 
 MainComponent::~MainComponent()
 {
     // This shuts down the audio device and clears the audio source.
+    // Causes the AudioAppComponent::releaseResources() function to be called.
     shutdownAudio();
 }
 
@@ -35,11 +41,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 {
     // This function will be called when the audio device is started, or when
     // its settings (i.e. sample rate, block size, etc) are changed.
-
-    // You can use this function to initialise any resources you might need,
-    // but be careful - it will be called on the audio thread, not the GUI thread.
-
-    // For more details, see the help for AudioProcessor::prepareToPlay()
+    juce::Logger::getCurrentLogger()->writeToLog("MainComponent::prepareToPlay - Preparing to play audio...");
 }
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
@@ -57,8 +59,7 @@ void MainComponent::releaseResources()
 {
     // This will be called when the audio device stops, or when it is being
     // restarted due to a setting change.
-
-    // For more details, see the help for AudioProcessor::releaseResources()
+    juce::Logger::getCurrentLogger()->writeToLog ("Releasing audio resources");
 }
 
 //==============================================================================
@@ -75,13 +76,16 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
+    playButton.setBounds(0, 0, getWidth(), getHeight() / 2);
+    stopButton.setBounds(0, getHeight() / 2, getWidth(), getHeight() / 2);
 }
 
-void MainComponent::logMessage(juce::String message, const char* callingObjectClass)
+void MainComponent::changeListenerCallback (juce::ChangeBroadcaster *source)
 {
-    juce::String printOut;
-    printOut << callingObjectClass;
-    printOut << ": ";
-    printOut << message;
-    juce::Logger::getCurrentLogger()->writeToLog(printOut);
+    juce::Logger::getCurrentLogger()->writeToLog("MainComponent::changeListenerCallback - Change event intercepted");
+    
+    if (source == &transportSource)
+    {
+        juce::Logger::getCurrentLogger()->writeToLog("MainComponent::changeListenerCallback: - TransportSource status has changed!");
+    }
 }

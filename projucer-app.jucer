@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mhP8qp" name="projucer-app" projectType="guiapp" useAppConfig="0"
+<JUCERPROJECT id="yfsW89" name="projucer-app" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
-  <MAINGROUP id="Mta1wT" name="projucer-app">
-    <GROUP id="{48D2DCFB-C133-D365-1140-DD812E87AC54}" name="Source">
-      <FILE id="pqq85V" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="Rnhw1x" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="dBmszT" name="MainComponent.cpp" compile="1" resource="0"
+  <MAINGROUP id="SkN2bh" name="projucer-app">
+    <GROUP id="{15AB3404-09BC-2A9B-4798-B26F7DAACF23}" name="Source">
+      <FILE id="Ou8R0M" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="B6cvMX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="ZXV0JX" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
     </GROUP>
   </MAINGROUP>
