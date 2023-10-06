@@ -17,10 +17,11 @@ MainComponent::MainComponent()
     else
     {
         // Specify the number of input and output channels that we want to open
+        // Call the prepareToPlay() function
         setAudioChannels (2, 2);
     }
     
-    logMessage("Starting the application");
+    logMessage("Hello World");
 }
 
 MainComponent::~MainComponent()
@@ -76,7 +77,11 @@ void MainComponent::resized()
     // update their positions.
 }
 
-void MainComponent::logMessage(juce::String message)
+void MainComponent::logMessage(juce::String message, const char* callingObjectClass)
 {
-    juce::Logger::getCurrentLogger()->writeToLog(message);
+    juce::String printOut;
+    printOut << callingObjectClass;
+    printOut << ": ";
+    printOut << message;
+    juce::Logger::getCurrentLogger()->writeToLog(printOut);
 }
