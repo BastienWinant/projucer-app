@@ -55,6 +55,8 @@ private:
     // Playback control buttons
     juce::TextButton playButton{"PLAY"};
     juce::TextButton stopButton{"STOP"};
+    
+    void changeState(TransportState newState);
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

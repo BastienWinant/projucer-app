@@ -42,17 +42,19 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
     // This function will be called when the audio device is started, or when
     // its settings (i.e. sample rate, block size, etc) are changed.
     juce::Logger::getCurrentLogger()->writeToLog("MainComponent::prepareToPlay - Preparing to play audio...");
+    transportSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& bufferToFill)
 {
-    // Your audio-processing code goes here!
-
-    // For more details, see the help for AudioProcessor::getNextAudioBlock()
-
-    // Right now we are not producing any data, in which case we need to clear the buffer
-    // (to prevent the output of random noise)
-    bufferToFill.clearActiveBufferRegion();
+    // checks if there is a valid AudioFormatReaderSource object first and simply zeros the output if not
+    if (readerSource.get() == nullptr)
+    {
+        bufferToFill.clearActiveBufferRegion();
+        return;
+    }
+    
+    transportSource.getNextAudioBlock(bufferToFill);
 }
 
 void MainComponent::releaseResources()
@@ -60,6 +62,7 @@ void MainComponent::releaseResources()
     // This will be called when the audio device stops, or when it is being
     // restarted due to a setting change.
     juce::Logger::getCurrentLogger()->writeToLog ("Releasing audio resources");
+    transportSource.releaseResources();
 }
 
 //==============================================================================
@@ -80,6 +83,34 @@ void MainComponent::resized()
     stopButton.setBounds(0, getHeight() / 2, getWidth(), getHeight() / 2);
 }
 
+void MainComponent::changeState(TransportState newState)
+{
+    if (state != newState)
+    {
+        state = newState;
+        
+        switch (state) {
+            case Stopped:
+                stopButton.setEnabled(false);
+                playButton.setEnabled(true);
+                transportSource.setPosition(0.0);
+                break;
+            case Starting:
+                playButton.setEnabled(false);
+                transportSource.start();
+                break;
+            case Playing:
+                stopButton.setEnabled(true);
+                break;
+            case Stopping:
+                transportSource.stop();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 void MainComponent::changeListenerCallback (juce::ChangeBroadcaster *source)
 {
     juce::Logger::getCurrentLogger()->writeToLog("MainComponent::changeListenerCallback - Change event intercepted");
@@ -87,5 +118,14 @@ void MainComponent::changeListenerCallback (juce::ChangeBroadcaster *source)
     if (source == &transportSource)
     {
         juce::Logger::getCurrentLogger()->writeToLog("MainComponent::changeListenerCallback: - TransportSource status has changed!");
+        
+        if (transportSource.isPlaying())
+        {
+            changeState(Playing);
+        }
+        else
+        {
+            changeState(Stopped);
+        }
     }
 }
