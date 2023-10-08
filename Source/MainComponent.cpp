@@ -2,6 +2,7 @@
 
 //==============================================================================
 MainComponent::MainComponent()
+: state(Stopped)
 {
     // Make sure you set the size of the component after
     // you add any child components.
@@ -28,6 +29,9 @@ MainComponent::MainComponent()
     playButton.addListener(this);
     stopButton.addListener(this);
     loadButton.addListener(this);
+    
+    playButton.setEnabled(false);
+    stopButton.setEnabled(false);
     
     formatManager.registerBasicFormats();
     
@@ -99,21 +103,33 @@ void MainComponent::changeState(TransportState newState)
         
         switch (state) {
             case Stopped:
+                playButton.setButtonText("PLAY");
+                stopButton.setButtonText("STOP");
                 stopButton.setEnabled(false);
-                playButton.setEnabled(true);
                 transportSource.setPosition(0.0);
                 break;
+                
             case Starting:
-                playButton.setEnabled(false);
                 transportSource.start();
                 break;
+                
             case Playing:
+                playButton.setButtonText("PAUSE");
+                stopButton.setButtonText("STOP");
                 stopButton.setEnabled(true);
                 break;
-            case Stopping:
+                
+            case Pausing:
                 transportSource.stop();
                 break;
-            default:
+                
+            case Paused:
+                playButton.setButtonText("Resume");
+                stopButton.setButtonText("Return to Zero");
+                break;
+                
+            case Stopping:
+                transportSource.stop();
                 break;
         }
     }
@@ -131,9 +147,13 @@ void MainComponent::changeListenerCallback (juce::ChangeBroadcaster *source)
         {
             changeState(Playing);
         }
-        else
+        else if ((state == Stopping) || (state == Playing))
         {
             changeState(Stopped);
+        }
+        else if (state == Pausing)
+        {
+            changeState(Paused);
         }
     }
 }
@@ -143,35 +163,60 @@ void MainComponent::buttonClicked (juce::Button *button)
     if (button == &playButton)
     {
         juce::Logger::getCurrentLogger()->writeToLog("MainComponent::buttonClicked: - Play button clicked!");
+        
+        if ((state == Stopped) || (state == Paused))
+        {
+            changeState(Starting);
+        }
+        else if (state == Playing)
+        {
+            changeState(Pausing);
+        }
     }
     
     if (button == &stopButton)
     {
         juce::Logger::getCurrentLogger()->writeToLog("MainComponent::buttonClicked: - Stop button clicked!");
+        
+        if (state == Paused)
+        {
+            changeState(Stopped);
+        }
+        else
+        {
+            changeState(Stopping);
+        }
     }
     
     if (button == &loadButton)
     {
         juce::Logger::getCurrentLogger()->writeToLog("MainComponent::buttonClicked: - Load button clicked!");
         
+        // Create the FileChooser object with a short message and allow the user to select only .mp3 files.
         chooser = std::make_unique<juce::FileChooser> ("Select an MP3 file to play",
-                                                       juce::File{}, "*.mp3");
+                                                       juce::File{}, "*.wav;*.aif;*.aiff;*.mp3");
         auto chooserFlags = juce::FileBrowserComponent::openMode
                             | juce::FileBrowserComponent::canSelectFiles;
         
+        // Pop up the FileChooser object.
         chooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc)
         {
             auto file = fc.getResult();
             
             if (file != juce::File{})
             {
+                // Attempt to create a reader for this particular file.
+                // This will return the nullptr value if it fails.
                 auto* reader = formatManager.createReaderFor(file);
                 
                 if (reader != nullptr)
                 {
                     auto newSource = std::make_unique<juce::AudioFormatReaderSource> (reader, true);
+                    
                     transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
                     playButton.setEnabled(true);
+                    
+                    // Transfer ownership from the local newSource variable to readerSource.
                     readerSource.reset(newSource.release());
                 }
             }

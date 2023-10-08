@@ -7,6 +7,8 @@ enum TransportState
     Stopped, // Audio playback is stopped and ready to be started.
     Starting, // Audio playback hasn't yet started but it has been told to start.
     Playing, // Audio is playing.
+    Pausing,
+    Paused,
     Stopping // Audio is playing but playback has been told to stop, after this it will return to the Stopped state.
 };
 
