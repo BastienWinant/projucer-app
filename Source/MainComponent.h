@@ -65,6 +65,8 @@ private:
     juce::TextButton loadButton{"LOAD"};
     
     void changeState(TransportState newState);
+    
+    std::unique_ptr<juce::FileChooser> chooser;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
